@@ -15,7 +15,7 @@
     key: "{{ lookup('file', item) }}"
   with_fileglob:
     - "{{ inventory_dir }}/*.pub"
-  when: enable_root_login and ansible_user != "root"
+  when: (enable_root_login | bool) and (ansible_user != "root")
 
 - name: Ensure PubkeyAuthentication is set to yes
   lineinfile:
@@ -37,7 +37,7 @@
     regexp: "^PasswordAuthentication"
     line: "PasswordAuthentication no"
     state: present
-  when: disable_password_login
+  when: disable_password_login | bool
 
 - name: Enable password authentication
   lineinfile:
@@ -45,7 +45,7 @@
     regexp: "^PasswordAuthentication"
     line: "PasswordAuthentication yes"
     state: present
-  when: not disable_password_login
+  when: not disable_password_login | bool
 
 - name: Enable root login
   lineinfile:
@@ -53,7 +53,7 @@
     regexp: "^PermitRootLogin"
     line: "PermitRootLogin yes"
     state: present
-  when: enable_root_login or ansible_user == "root"
+  when: (enable_root_login | bool) or (ansible_user == "root")
 
 - name: Disable root login
   lineinfile:
@@ -61,7 +61,7 @@
     regexp: "^PermitRootLogin"
     line: "PermitRootLogin no"
     state: present
-  when: not enable_root_login and ansible_user != "root"
+  when: (not enable_root_login | bool) and (ansible_user != "root")
 
 - name: Reload ssh service
   service:
