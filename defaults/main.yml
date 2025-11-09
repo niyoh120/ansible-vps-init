@@ -6,7 +6,8 @@ locale: "en_US.UTF-8"
 timezone: Asia/Shanghai
 
 sysctl_config:
-  {}
+  net.ipv4.tcp_congestion_control: bbr
+  net.core.default_qdisc: fq
 
 default_pkgs:
   - apt-transport-https
