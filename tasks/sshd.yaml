@@ -39,6 +39,22 @@
     state: present
   when: disable_password_login | bool
 
+- name: Disable keyboard interactive authentication
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "^KbdInteractiveAuthentication"
+    line: "KbdInteractiveAuthentication no"
+    state: present
+  when: disable_password_login | bool
+
+- name: Disable challenge response authentication
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "^ChallengeResponseAuthentication"
+    line: "ChallengeResponseAuthentication no"
+    state: present
+  when: disable_password_login | bool
+
 - name: Enable password authentication
   lineinfile:
     path: /etc/ssh/sshd_config
