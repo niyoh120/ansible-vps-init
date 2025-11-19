@@ -28,3 +28,7 @@ ssh_pub_key_path: "{{ inventory_dir }}/files/ssh"
 enable_root_login: false
 
 disable_password_login: false
+
+current_user_password: null
+
+root_user_password: null

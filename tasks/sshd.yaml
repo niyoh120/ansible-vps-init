@@ -17,6 +17,24 @@
     - "{{ inventory_dir }}/*.pub"
   when: (enable_root_login | bool) and (ansible_user != "root")
 
+- name: Set current user password when provided
+  user:
+    name: "{{ ansible_user }}"
+    password: "{{ current_user_password }}"
+    update_password: always
+  when:
+    - current_user_password is not none
+    - (current_user_password | string | length) > 0
+
+- name: Set root user password when provided
+  user:
+    name: root
+    password: "{{ root_user_password }}"
+    update_password: always
+  when:
+    - root_user_password is not none
+    - (root_user_password | string | length) > 0
+
 - name: Ensure PubkeyAuthentication is set to yes
   lineinfile:
     path: /etc/ssh/sshd_config
