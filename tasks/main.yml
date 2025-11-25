@@ -1,9 +1,44 @@
 ---
 # tasks file for vps-init-ansible
 
-- include_tasks: hostname.yaml
-- include_tasks: locale.yaml
-- include_tasks: time.yaml
-- include_tasks: sysctl.yaml
-- include_tasks: pkgs.yaml
-- include_tasks: sshd.yaml
+- name: Run hostname tasks
+  block:
+    - include_tasks: hostname.yaml
+  rescue:
+    - debug:
+        msg: "Hostname tasks failed at {{ ansible_failed_task.name }}: {{ ansible_failed_result.msg | default(ansible_failed_result) }}"
+
+- name: Run locale tasks
+  block:
+    - include_tasks: locale.yaml
+  rescue:
+    - debug:
+        msg: "Locale tasks failed at {{ ansible_failed_task.name }}: {{ ansible_failed_result.msg | default(ansible_failed_result) }}"
+
+- name: Run time tasks
+  block:
+    - include_tasks: time.yaml
+  rescue:
+    - debug:
+        msg: "Time tasks failed at {{ ansible_failed_task.name }}: {{ ansible_failed_result.msg | default(ansible_failed_result) }}"
+
+- name: Run sysctl tasks
+  block:
+    - include_tasks: sysctl.yaml
+  rescue:
+    - debug:
+        msg: "Sysctl tasks failed at {{ ansible_failed_task.name }}: {{ ansible_failed_result.msg | default(ansible_failed_result) }}"
+
+- name: Run pkgs tasks
+  block:
+    - include_tasks: pkgs.yaml
+  rescue:
+    - debug:
+        msg: "Package tasks failed at {{ ansible_failed_task.name }}: {{ ansible_failed_result.msg | default(ansible_failed_result) }}"
+
+- name: Run sshd tasks
+  block:
+    - include_tasks: sshd.yaml
+  rescue:
+    - debug:
+        msg: "SSHD tasks failed at {{ ansible_failed_task.name }}: {{ ansible_failed_result.msg | default(ansible_failed_result) }}"
