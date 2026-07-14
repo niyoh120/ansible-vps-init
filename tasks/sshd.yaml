@@ -49,13 +49,31 @@
     line: "AuthorizedKeysFile .ssh/authorized_keys"
     state: present
 
+- name: Read current user authorized_keys to verify keys exist
+  slurp:
+    path: "~/.ssh/authorized_keys"
+  register: _user_authorized_keys
+  failed_when: false
+
 - name: Disable password authentication
   lineinfile:
     path: /etc/ssh/sshd_config
     regexp: "^PasswordAuthentication"
     line: "PasswordAuthentication no"
     state: present
-  when: disable_password_login | bool
+  when:
+    - disable_password_login | bool
+    - _user_authorized_keys.content is defined
+    - (_user_authorized_keys.content | b64decode | trim | length) > 0
+
+- name: Warn that password login was NOT disabled (no authorized key)
+  debug:
+    msg: >-
+      WARNING: disable_password_login is true but no authorized key was found for
+      user {{ ansible_user }}. Password login remains ENABLED to avoid locking out SSH access.
+  when:
+    - disable_password_login | bool
+    - (_user_authorized_keys.content is undefined) or (_user_authorized_keys.content | b64decode | trim | length) == 0
 
 - name: Disable keyboard interactive authentication
   lineinfile:
@@ -63,7 +81,10 @@
     regexp: "^KbdInteractiveAuthentication"
     line: "KbdInteractiveAuthentication no"
     state: present
-  when: disable_password_login | bool
+  when:
+    - disable_password_login | bool
+    - _user_authorized_keys.content is defined
+    - (_user_authorized_keys.content | b64decode | trim | length) > 0
 
 - name: Disable challenge response authentication
   lineinfile:
@@ -71,7 +92,10 @@
     regexp: "^ChallengeResponseAuthentication"
     line: "ChallengeResponseAuthentication no"
     state: present
-  when: disable_password_login | bool
+  when:
+    - disable_password_login | bool
+    - _user_authorized_keys.content is defined
+    - (_user_authorized_keys.content | b64decode | trim | length) > 0
 
 - name: Enable password authentication
   lineinfile:
