@@ -1,5 +1,5 @@
 - name: Set sysctl parameters
-  sysctl:
+  ansible.posix.sysctl:
     name: "{{ item.key }}"
     value: "{{ item.value }}"
     state: present

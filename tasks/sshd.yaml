@@ -1,7 +1,7 @@
 # sshd
 
 - name: Set authorized key taken from file
-  authorized_key:
+  ansible.posix.authorized_key:
     user: "{{ ansible_user }}"
     state: present
     key: "{{ lookup('file', item) }}"
@@ -9,7 +9,7 @@
     - "{{ ssh_pub_key_path }}/*.pub"
 
 - name: Set authorized key taken from file to root
-  authorized_key:
+  ansible.posix.authorized_key:
     user: root
     state: present
     key: "{{ lookup('file', item) }}"
